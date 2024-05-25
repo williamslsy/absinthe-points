@@ -46,7 +46,7 @@ export default function Home() {
         {errors.points && <p className="text-red-500">{errors.points.message}</p>}
 
         <Button type="submit" disabled={isSubmitting} className="bg-primary">
-          Distribute
+          {isSubmitting ? 'Distributing' : 'Distribute'}
         </Button>
       </form>
     </div>
