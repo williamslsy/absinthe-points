@@ -1,81 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import usePointsDistribution from '../hooks/usePointsDistribution';
+import { formSchema } from '@/lib/validations';
 
 export default function Home() {
-  const [apiKey, setApiKey] = useState('');
-  const [address, setAddress] = useState('');
-  const [points, setPoints] = useState(0);
-  const [eventName, setEventName] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      apiKey: '',
+      address: '',
+      points: 0,
+      eventName: '',
+    },
+  });
 
-  const handleDistribute = async () => {
-    const data = {
-      address,
-      eventName,
-      points,
-    };
-    try {
-      const response = await fetch('/api/points', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify(data),
-      });
-      const res = await response.json();
-      console.log(res);
-      if (response.ok) {
-        alert('Points distributed successfully');
-      } else {
-        alert(res.message);
-      }
-    } catch (error) {
-      console.error(error);
-      alert('An error occurred');
-    }
-  };
+  const { handleDistribute } = usePointsDistribution();
 
   return (
-    <div className="container mx-auto px-4 py-8 text-black">
-      <h1 className="text-gray-50 text-3xl font-bold text-center mb-8">Distribute Points</h1>
-      <div className="grid grid-cols-1 gap-4">
-        <input
-          type="text"
-          placeholder="API Key"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          className="rounded-md border border-gray-300 py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="text"
-          placeholder="Event Name"
-          value={eventName}
-          onChange={(e) => setEventName(e.target.value)}
-          className="rounded-md border border-gray-300 py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="text"
-          placeholder="Address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          className="rounded-md border border-gray-300 py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="number"
-          placeholder="Points"
-          value={points}
-          onChange={(e) => setPoints(Number(e.target.value))}
-          className="rounded-md border border-gray-300 py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 disabled:opacity-50"
-        disabled={!apiKey || !address || points <= 0 || !eventName}
-        onClick={handleDistribute}
-      >
-        Distribute
-      </button>
+    <div className="max-w-[900px] mx-auto px-4 py-8 text-black">
+      <h1 className="text-black text-3xl font-bold text-center mb-8">Distribute Points</h1>
+      <form onSubmit={handleSubmit(handleDistribute)} className="grid grid-cols-1 gap-4">
+        <Input type="text" placeholder="API Key" {...register('apiKey')} />
+        {errors.apiKey && <p className="text-red-500">{errors.apiKey.message}</p>}
+
+        <Input type="text" placeholder="Event Name" {...register('eventName')} />
+        {errors.eventName && <p className="text-red-500">{errors.eventName.message}</p>}
+
+        <Input type="text" placeholder="Address" {...register('address')} />
+        {errors.address && <p className="text-red-500">{errors.address.message}</p>}
+
+        <Input type="number" placeholder="Points" {...register('points')} />
+        {errors.points && <p className="text-red-500">{errors.points.message}</p>}
+
+        <Button type="submit" disabled={isSubmitting} className="bg-primary">
+          Distribute
+        </Button>
+      </form>
     </div>
   );
 }
