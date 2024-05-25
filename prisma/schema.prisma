@@ -1,0 +1,53 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+    // Uses connection pooling
+    url       = env("POSTGRES_PRISMA_URL")
+    // Uses direct connection, ⚠️ make sure to keep this to `POSTGRES_URL_NON_POOLING`
+    // or you'll have dangling databases from migrations
+    directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Projects {
+    id         Int      @id @default(autoincrement())
+    name       String
+    api_key    String   @unique
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt @default(now())
+
+    events Events[]
+    points Points[]
+}
+
+model Events {
+    id          Int      @id @default(autoincrement())
+    name        String
+    project_id Int
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt @default(now())
+
+    // relations
+    project Projects @relation(fields: [project_id], references: [id])
+    points   Points[]
+    //   event name and project id should be unique
+    @@unique([name, project_id])
+}
+
+model Points {
+    id          Int      @id @default(autoincrement())
+    event_id    Int
+    project_id Int
+    points      Int
+    address     String
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt  @default(now())
+
+    event Events @relation(fields: [event_id], references: [id])
+    project Projects @relation(fields: [project_id], references: [id])
+
+    //  event id and project id should be unique
+    @@unique([event_id, project_id, address])
+}
