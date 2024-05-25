@@ -1,7 +1,7 @@
 'use client';
 import { toast } from '@/components/ui/use-toast';
 import { DistributePoints } from '@/lib/types';
-import React, { createContext, useContext } from 'react';
+import React, { createContext } from 'react';
 
 interface PointsDistributionContextType {
   handleDistribute: (data: DistributePoints) => Promise<void>;
@@ -62,56 +62,6 @@ function PointsDistributionProvider({ children }: { children: React.ReactNode })
       throw error;
     }
   };
-
-  //   try {
-  //     if (!data.apiKey || !data.address || !data.eventName || data.points <= 0) {
-  //       toast({
-  //         title: 'Missing Information',
-  //         description: 'Please ensure all fields are filled correctly.',
-  //         variant: 'destructive',
-  //       });
-  //       return;
-  //     }
-
-  //     const response = await fetch('/api/points', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${data.apiKey}`,
-  //       },
-  //       body: JSON.stringify(data),
-  //     });
-
-  //     if (!response.ok) {
-  //       const res = await response.json();
-  //       let errorMessage = 'Failed to distribute points. Please try again.';
-
-  //       if (response.status === 404) {
-  //         errorMessage = 'Endpoint not found. Please check the URL.';
-  //       } else if (response.status >= 500) {
-  //         errorMessage = 'Server error. Please try again later.';
-  //       } else if (response.status === 403 || response.status === 401) {
-  //         errorMessage = 'Authorization error. Please check your API key.';
-  //       } else if (res.message) {
-  //         errorMessage = res.message;
-  //       }
-  //       throw new Error(errorMessage);
-  //     }
-
-  //     toast({
-  //       title: 'Success',
-  //       description: 'Points distributed successfully!',
-  //     });
-  //   } catch (error: any) {
-  //     console.error(error);
-  //     toast({
-  //       title: 'Error',
-  //       description: error.message || 'Unknown error occurred.',
-  //       variant: 'destructive',
-  //     });
-  //     throw error;
-  //   }
-  // };
   return <PointsDistributionContext.Provider value={{ handleDistribute }}>{children}</PointsDistributionContext.Provider>;
 }
 

@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db';
 export async function GET(request: Request): Promise<Response> {
   // get the points for a specific address
   // get the points for a specific address filtered by eventName
-  // Store the points data in a postgres or redis instance
+  // Store the points data in a postgres instance
   const { p: project, err } = await auth(request);
   if (err) {
     return err;

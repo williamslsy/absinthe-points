@@ -25,7 +25,6 @@ export default function Home() {
     defaultValues: {
       apiKey: '',
       address: '',
-      points: 0,
       eventName: '',
     },
   });
